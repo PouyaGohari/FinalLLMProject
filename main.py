@@ -71,6 +71,6 @@ def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
 
 
 if __name__=='__main__':
-    hf_token = input("Please give your token to logging purpose")
+    hf_token = input("Please give your token to logging purpose\n")
     login(token=hf_token)
     load_all_clusters(MyConfig.cluster_repo_id)
