@@ -45,28 +45,27 @@ def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
     # List all files in the repo
     all_files = list_repo_files(repo_id)
 
-    # Loop through cluster0 to cluster9
     for cluster_index in range(10):
         cluster_folder = f"cluster{cluster_index}"
-
-        # Filter files belonging to this subfolder
         cluster_files = [f for f in all_files if f.startswith(f"{cluster_folder}/")]
 
-        print(f"Downloading from: {cluster_folder} ({len(cluster_files)} files)")
+        # Save path: clusters/cluster0, not clusters/cluster0/cluster0
+        save_path = os.path.join(local_dir, cluster_folder)
+        os.makedirs(save_path, exist_ok=True)
 
-        for file in cluster_files:
-            relative_path = file.split("/", 1)[1]  # get filename only
-            save_path = os.path.join(local_dir, cluster_folder)
-            os.makedirs(save_path, exist_ok=True)
+        print(f"Downloading files from Hugging Face subfolder '{cluster_folder}'...")
+
+        for file_path in cluster_files:
+            filename = file_path.split("/")[-1]  # get just the filename
 
             local_file = hf_hub_download(
                 repo_id=repo_id,
-                filename=relative_path,
+                filename=filename,
                 subfolder=cluster_folder,
                 local_dir=save_path,
-                cache_dir=None,
                 local_dir_use_symlinks=False
             )
+
             print(f"  ✓ Downloaded: {local_file}")
 
 
