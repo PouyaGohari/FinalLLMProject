@@ -29,8 +29,7 @@ from typing import (
     Dict,
     Literal
 )
-from huggingface_hub import login
-from huggingface_hub import hf_hub_download
+from huggingface_hub import hf_hub_download, login, list_repo_files
 import MyConfig
 
 def set_seed(seed: int):
@@ -40,28 +39,38 @@ def set_seed(seed: int):
     torch.cuda.manual_seed_all(seed)
 
 
-def loadClusterFile(repo_id: str, filenames: list[str], subfolder: str = "", local_dir: str = "clusters") -> None:
-    """
-    Load each cluster file from Hugging Face repo into local environment.
-
-    :param repo_id: The ID of the Hugging Face repository (e.g. "username/repo_name")
-    :param filenames: A list of cluster filenames to download
-    :param subfolder: Optional subfolder in the repo (if any)
-    :param local_dir: Local directory to save downloaded files
-    """
+def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
     os.makedirs(local_dir, exist_ok=True)
 
-    for filename in filenames:
-        file_path = hf_hub_download(
-            repo_id=repo_id,
-            filename=filename,
-            subfolder=subfolder,
-            local_dir=local_dir
-        )
-        print(f"Loaded: {file_path}")
+    # List all files in the repo
+    all_files = list_repo_files(repo_id)
+
+    # Loop through cluster0 to cluster9
+    for cluster_index in range(10):
+        cluster_folder = f"cluster{cluster_index}"
+
+        # Filter files belonging to this subfolder
+        cluster_files = [f for f in all_files if f.startswith(f"{cluster_folder}/")]
+
+        print(f"Downloading from: {cluster_folder} ({len(cluster_files)} files)")
+
+        for file in cluster_files:
+            relative_path = file.split("/", 1)[1]  # get filename only
+            save_path = os.path.join(local_dir, cluster_folder)
+            os.makedirs(save_path, exist_ok=True)
+
+            local_file = hf_hub_download(
+                repo_id=repo_id,
+                filename=relative_path,
+                subfolder=cluster_folder,
+                local_dir=save_path,
+                cache_dir=None,
+                local_dir_use_symlinks=False
+            )
+            print(f"  ✓ Downloaded: {local_file}")
 
 
 if __name__=='__main__':
     hf_token = input("Please give your token to logging purpose")
     login(token=hf_token)
-    loadClusterFile(MyConfig.cluster_repo_id, MyConfig.file_names)
+    load_all_clusters(MyConfig.cluster_repo_id)
