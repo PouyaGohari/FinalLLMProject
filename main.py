@@ -29,6 +29,7 @@ from typing import (
     Dict,
     Literal
 )
+from huggingface_hub import login
 from huggingface_hub import hf_hub_download
 import MyConfig
 
@@ -61,4 +62,6 @@ def loadClusterFile(repo_id: str, filenames: list[str], subfolder: str = "", loc
 
 
 if __name__=='__main__':
+    hf_token = input("Please give your token to logging purpose")
+    login(token=hf_token)
     loadClusterFile(MyConfig.cluster_repo_id, MyConfig.file_names)
