@@ -27,10 +27,12 @@ from utils.config import *
 from typing import (
     List,
     Dict,
-    Literal
+    Literal,
+    Tuple
+
 )
 from huggingface_hub import hf_hub_download, login, list_repo_files
-import MyConfig
+from MyConfig import *
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -45,13 +47,26 @@ def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
     # List all files in the repo
     all_files = list_repo_files(repo_id)
 
+
     for cluster_index in range(10):
         cluster_folder = f"cluster{cluster_index}"
         cluster_files = [f for f in all_files if f.startswith(f"{cluster_folder}/")]
 
+
         # Save path: clusters/cluster0, not clusters/cluster0/cluster0
         save_path = os.path.join(local_dir, cluster_folder)
         os.makedirs(save_path, exist_ok=True)
+        all_exist = True
+        for file_path in cluster_files:
+            filename = file_path.split("/")[-1]
+            local_file_path = os.path.join(save_path, filename)
+            if not os.path.exists(local_file_path):
+                all_exist = False
+                break
+
+        if all_exist:
+            print(f"✅ Skipping {cluster_folder}, all files already exist.")
+            continue
 
         print(f"Downloading files from Hugging Face subfolder '{cluster_folder}'...")
 
@@ -66,10 +81,33 @@ def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
                 local_dir_use_symlinks=False
             )
 
-            print(f"  ✓ Downloaded: {local_file}")
+def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[AutoTokenizer, AutoModelForCausalLM]:
+    """
+    This function will load the quantized version of specified model.
+    :param model_name: The model name
+    :param local_dir: Directory of the downloaded the model
+    :return:
+        Model and Tokenizer.
+    """
+    os.makedirs(local_dir, exist_ok=True)
+
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_name, use_fast=True, padding_side='right', model_max_length=MAX_LENGTH, cache_dir=local_dir
+    )
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=False,
+    )
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name, torch_dtype=torch.float16, quantization_config=bnb_config, cache_dir=local_dir
+    )
+    return model, tokenizer
 
 
 if __name__=='__main__':
     hf_token = input("Please give your token to logging purpose\n")
     login(token=hf_token)
-    load_all_clusters(MyConfig.cluster_repo_id)
+    load_all_clusters(CLUSTER_REPO_ID)
+    model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)
