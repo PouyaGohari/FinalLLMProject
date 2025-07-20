@@ -47,26 +47,13 @@ def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
     # List all files in the repo
     all_files = list_repo_files(repo_id)
 
-
     for cluster_index in range(10):
         cluster_folder = f"cluster{cluster_index}"
         cluster_files = [f for f in all_files if f.startswith(f"{cluster_folder}/")]
 
-
         # Save path: clusters/cluster0, not clusters/cluster0/cluster0
         save_path = os.path.join(local_dir, cluster_folder)
         os.makedirs(save_path, exist_ok=True)
-        all_exist = True
-        for file_path in cluster_files:
-            filename = file_path.split("/")[-1]
-            local_file_path = os.path.join(save_path, filename)
-            if not os.path.exists(local_file_path):
-                all_exist = False
-                break
-
-        if all_exist:
-            print(f"✅ Skipping {cluster_folder}, all files already exist.")
-            continue
 
         print(f"Downloading files from Hugging Face subfolder '{cluster_folder}'...")
 
