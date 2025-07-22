@@ -31,7 +31,7 @@ from typing import (
     Tuple
 
 )
-from huggingface_hub import hf_hub_download, login, list_repo_files
+from huggingface_hub import hf_hub_download, login, list_repo_files, snapshot_download
 from MyConfig import *
 from MyArgParser import downloading_adapters
 
@@ -92,21 +92,20 @@ def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[Auto
     )
     return model, tokenizer
 
-def langauage_expert_adapters(repo_id: str, language_path: str,  local_dir: str="language_adapters") -> None :
+def langauage_expert_adapters(repo_id: str,  local_dir: str="language_adapters") -> None :
     """
     This function will load the expert model
     :param repo_id: Repo ID.
-    :param language_path: The path of language expert.
     :param local_dir: The folder we should save the cache.
     :return:
     Saving Wiki-adapters in local.
     """
     os.makedirs(local_dir, exist_ok=True)
-    hf_hub_download(
+    snapshot_download(
         repo_id=repo_id,
-        filename=language_path,
         local_dir=local_dir
     )
+    print(f"Downloaded the entire repo {repo_id} to {local_dir}/")
 
 if __name__=='__main__':
     args = downloading_adapters()
