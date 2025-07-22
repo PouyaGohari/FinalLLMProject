@@ -64,8 +64,7 @@ def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
                 repo_id=repo_id,
                 filename=filename,
                 subfolder=cluster_folder,
-                local_dir=save_path,
-                local_dir_use_symlinks=False
+                local_dir=save_path
             )
 
 def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[AutoTokenizer, AutoModelForCausalLM]:
@@ -92,9 +91,25 @@ def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[Auto
     )
     return model, tokenizer
 
+def langauage_expert_adapters(repo_id: str, language_path: str,  local_dir: str="language_adapters") -> None :
+    """
+    This function will load the expert model
+    :param repo_id: Repo ID.
+    :param language_path: The path of language expert.
+    :param local_dir: The folder we should save the cache.
+    :return:
+    Saving Wiki-adapters in local.
+    """
+    os.makedirs(local_dir, exist_ok=True)
+    hf_hub_download(
+        repo_id=repo_id,
+        filename=language_path,
+        local_dir=local_dir
+    )
 
 if __name__=='__main__':
     hf_token = input("Please give your token to logging purpose\n")
     login(token=hf_token)
     load_all_clusters(CLUSTER_REPO_ID)
+    langauage_expert_adapters(EXPERT_REPO_ID, language_path="le_experts_phi3_diff_lang/cluster0_batch16_prop1.0_langen/checkpoint-16")
     model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)

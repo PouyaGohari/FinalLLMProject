@@ -61,11 +61,13 @@ class CrossLingualExpertOrganiser(BaseMergingModule):
                 if isinstance(module, LoraLayer):
                     for adapter_name in self.cluster_names.keys():
                         if use_avg_lora:
+                            ## I guess it is for subtracting each lora module from the averaged lora experts
                             module.lora_A[adapter_name].weight = torch.nn.Parameter(
                                 module.lora_A[adapter_name].weight - module.lora_A['average'].weight)
                             module.lora_B[adapter_name].weight = torch.nn.Parameter(
                                 module.lora_B[adapter_name].weight - module.lora_B['average'].weight)
                         else:
+                            ## I guess it is for subtracting the Wikipedia
                             module.lora_A[adapter_name].weight = torch.nn.Parameter(
                                 module.lora_A[adapter_name].weight - module.lora_A['source_formal_expert'].weight)
                             module.lora_B[adapter_name].weight = torch.nn.Parameter(

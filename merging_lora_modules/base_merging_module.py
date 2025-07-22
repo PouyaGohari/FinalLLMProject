@@ -10,7 +10,7 @@ from transformers import AutoTokenizer, AutoConfig
 
 from utils.config import EXPERTS_FOLDER_PATH, MAX_LENGTH
 
-
+## Should be changed due to our cluster names files.
 cluster_checkpoint_names = {
     'cluster0': f'{EXPERTS_FOLDER_PATH}/cluster0_batch1_prop0.2/checkpoint-2507/',
     'cluster1': f'{EXPERTS_FOLDER_PATH}/cluster1_batch1_prop0.2/checkpoint-2506/',
