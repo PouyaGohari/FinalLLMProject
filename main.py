@@ -42,31 +42,31 @@ def set_seed(seed: int):
     torch.cuda.manual_seed_all(seed)
 
 
-def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
-    os.makedirs(local_dir, exist_ok=True)
-
-    # List all files in the repo
-    all_files = list_repo_files(repo_id)
-
-    for cluster_index in range(10):
-        cluster_folder = f"cluster{cluster_index}"
-        cluster_files = [f for f in all_files if f.startswith(f"{cluster_folder}/")]
-
-        # Save path: clusters/cluster0, not clusters/cluster0/cluster0
-        save_path = os.path.join(local_dir, cluster_folder)
-        os.makedirs(save_path, exist_ok=True)
-
-        print(f"Downloading files from Hugging Face subfolder '{cluster_folder}'...")
-
-        for file_path in cluster_files:
-            filename = file_path.split("/")[-1]  # get just the filename
-
-            local_file = hf_hub_download(
-                repo_id=repo_id,
-                filename=filename,
-                subfolder=cluster_folder,
-                local_dir=save_path
-            )
+# def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
+#     os.makedirs(local_dir, exist_ok=True)
+#
+#     # List all files in the repo
+#     all_files = list_repo_files(repo_id)
+#
+#     for cluster_index in range(10):
+#         cluster_folder = f"cluster{cluster_index}"
+#         cluster_files = [f for f in all_files if f.startswith(f"{cluster_folder}/")]
+#
+#         # Save path: clusters/cluster0, not clusters/cluster0/cluster0
+#         save_path = os.path.join(local_dir, cluster_folder)
+#         os.makedirs(save_path, exist_ok=True)
+#
+#         print(f"Downloading files from Hugging Face subfolder '{cluster_folder}'...")
+#
+#         for file_path in cluster_files:
+#             filename = file_path.split("/")[-1]  # get just the filename
+#
+#             local_file = hf_hub_download(
+#                 repo_id=repo_id,
+#                 filename=filename,
+#                 subfolder=cluster_folder,
+#                 local_dir=save_path
+#             )
 
 def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[AutoTokenizer, AutoModelForCausalLM]:
     """
@@ -92,7 +92,7 @@ def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[Auto
     )
     return model, tokenizer
 
-def langauage_expert_adapters(repo_id: str,  local_dir: str="language_adapters") -> None :
+def load_save_hf_repo(repo_id: str,  local_dir: str="language_adapters") -> None :
     """
     This function will load the expert model
     :param repo_id: Repo ID.
@@ -110,6 +110,6 @@ def langauage_expert_adapters(repo_id: str,  local_dir: str="language_adapters")
 if __name__=='__main__':
     args = downloading_adapters()
     login(token=args.hf_token)
-    load_all_clusters(CLUSTER_REPO_ID)
-    langauage_expert_adapters(EXPERT_REPO_ID, LANGUAGE_PATH)
+    load_save_hf_repo(CLUSTER_REPO_ID, local_dir="clusters")
+    load_save_hf_repo(EXPERT_REPO_ID, local_dir="language_adapters")
     model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)
