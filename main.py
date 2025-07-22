@@ -33,6 +33,7 @@ from typing import (
 )
 from huggingface_hub import hf_hub_download, login, list_repo_files
 from MyConfig import *
+from MyArgParser import downloading_adapters
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -108,8 +109,8 @@ def langauage_expert_adapters(repo_id: str, language_path: str,  local_dir: str=
     )
 
 if __name__=='__main__':
-    hf_token = input("Please give your token to logging purpose\n")
-    login(token=hf_token)
+    args = downloading_adapters()
+    login(token=args.hf_token)
     load_all_clusters(CLUSTER_REPO_ID)
-    langauage_expert_adapters(EXPERT_REPO_ID, language_path="le_experts_phi3_diff_lang/cluster0_batch16_prop1.0_langen/checkpoint-16")
+    langauage_expert_adapters(EXPERT_REPO_ID, LANGUAGE_PATH)
     model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)
