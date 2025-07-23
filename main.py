@@ -13,6 +13,9 @@ from tqdm import tqdm
 import random
 import numpy as np
 import os
+import torch_cka
+import logging
+
 
 from utils.arg_parser import experts_merging_arg_parser
 from merging_lora_modules.simple_averaging import SimpleAveraging
@@ -41,32 +44,7 @@ def set_seed(seed: int):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-
-# def load_all_clusters(repo_id: str, local_dir: str = "clusters"):
-#     os.makedirs(local_dir, exist_ok=True)
-#
-#     # List all files in the repo
-#     all_files = list_repo_files(repo_id)
-#
-#     for cluster_index in range(10):
-#         cluster_folder = f"cluster{cluster_index}"
-#         cluster_files = [f for f in all_files if f.startswith(f"{cluster_folder}/")]
-#
-#         # Save path: clusters/cluster0, not clusters/cluster0/cluster0
-#         save_path = os.path.join(local_dir, cluster_folder)
-#         os.makedirs(save_path, exist_ok=True)
-#
-#         print(f"Downloading files from Hugging Face subfolder '{cluster_folder}'...")
-#
-#         for file_path in cluster_files:
-#             filename = file_path.split("/")[-1]  # get just the filename
-#
-#             local_file = hf_hub_download(
-#                 repo_id=repo_id,
-#                 filename=filename,
-#                 subfolder=cluster_folder,
-#                 local_dir=save_path
-#             )
+logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
 
 def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[AutoTokenizer, AutoModelForCausalLM]:
     """
