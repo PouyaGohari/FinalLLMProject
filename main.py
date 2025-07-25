@@ -5,15 +5,12 @@ from transformers import (
 )
 import torch
 
-import random
-import numpy as np
 import os
 import logging
 
 from utils.config import *
 from typing import (
     Tuple
-
 )
 from huggingface_hub import login, snapshot_download
 from MyConfig import *
@@ -37,7 +34,7 @@ def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[Auto
     os.makedirs(local_dir, exist_ok=True)
 
     tokenizer = AutoTokenizer.from_pretrained(
-        model_name, use_fast=True, padding_side='right', model_max_length=MAX_LENGTH, cache_dir=local_dir
+        model_name, use_fast=True, padding_side='right', model_max_length=MAX_LENGTH
     )
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
@@ -46,7 +43,7 @@ def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[Auto
         bnb_4bit_use_double_quant=False,
     )
     model = AutoModelForCausalLM.from_pretrained(
-        model_name, torch_dtype=torch.float16, quantization_config=bnb_config, cache_dir=local_dir
+        model_name, torch_dtype=torch.float16, quantization_config=bnb_config
     )
     return model, tokenizer
 
@@ -74,7 +71,7 @@ if __name__=='__main__':
     dataset = load_general_dataset(path=args.dataset_path, data_file=DATA_FILE)
     sub_dataset = get_samples(your_dataset=dataset, n_samples=args.n_samples, seed=args.seed)
     enhanced_model = apply_arrow_or_gks(
-        base_model_name=args.base_mode_name,
+        base_model_name=args.base_model_name,
         cluster_names=CLUSTER_NAMES,
         arrow_top_k=args.top_k,
         arrow_router_temperature=args.temperature,
