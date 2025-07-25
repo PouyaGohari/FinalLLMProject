@@ -8,6 +8,6 @@ def arg_parser():
     parser.add_argument("--top_k", default=3, type=int)
     parser.add_argument("--temperature", default=1.0, type=float)
     parser.add_argument("--gks", default=False, type=bool)
-    parser.add_argument("--base_mode_name", type=str, default="microsoft/Phi-3-mini-4k-instruct", required=True)
+    parser.add_argument("--base_model_name", type=str, default="microsoft/Phi-3-mini-4k-instruct", required=True)
     parser.add_argument("--n_samples", type=int, default=64)
     return parser.parse_args()
