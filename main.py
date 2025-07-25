@@ -1,4 +1,3 @@
-from accelerate.commands.config.config_args import cache_dir
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
