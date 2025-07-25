@@ -4,7 +4,6 @@ def arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--hf_token", required=True,  type=str)
     parser.add_argument("--seed", type=int, default=42)
-    parser = argparse.ArgumentParser(description="Applying arrow router and general knowledge subtraction. Then apply CKA on it.")
     parser.add_argument("--dataset_path", default=None, type=str)
     parser.add_argument("--top_k", default=3, type=int)
     parser.add_argument("--temperature", default=1.0, type=float)
