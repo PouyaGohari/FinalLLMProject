@@ -17,13 +17,12 @@ from typing import (
 )
 from huggingface_hub import login, snapshot_download
 from MyConfig import *
-from MyArgParser import downloading_adapters
-
-def set_seed(seed: int):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+from MyArgParser import arg_parser
+from my_cka import (
+    load_general_dataset,
+    apply_arrow_or_gks,
+    get_samples
+)
 
 logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
 
@@ -67,8 +66,19 @@ def load_save_hf_repo(repo_id: str,  local_dir: str="language_adapters") -> None
     print(f"Downloaded the entire repo {repo_id} to {local_dir}/")
 
 if __name__=='__main__':
-    args = downloading_adapters()
+    args = arg_parser()
     login(token=args.hf_token)
     load_save_hf_repo(CLUSTER_REPO_ID, local_dir="clusters")
     load_save_hf_repo(EXPERT_REPO_ID, local_dir="language_adapters")
-    model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)
+    general_model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)
+    dataset = load_general_dataset(path=args.dataset_path, data_file=DATA_FILE)
+    sub_dataset = get_samples(your_dataset=dataset, n_samples=args.n_samples, seed=args.seed)
+    enhanced_model = apply_arrow_or_gks(
+        base_model_name=args.base_mode_name,
+        cluster_names=CLUSTER_NAMES,
+        arrow_top_k=args.top_k,
+        arrow_router_temperature=args.temperature,
+        gks=args.gks,
+        language_experts=LANGUAGE_EXPERTS,
+        target_modules=TARGET_MODULES
+    )
