@@ -1,3 +1,4 @@
+from accelerate.commands.config.config_args import cache_dir
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
@@ -34,7 +35,7 @@ def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[Auto
     os.makedirs(local_dir, exist_ok=True)
 
     tokenizer = AutoTokenizer.from_pretrained(
-        model_name, use_fast=True, padding_side='right', model_max_length=MAX_LENGTH
+        model_name, use_fast=True, padding_side='right', model_max_length=MAX_LENGTH, cache_dir=local_dir
     )
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
@@ -43,7 +44,7 @@ def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[Auto
         bnb_4bit_use_double_quant=False,
     )
     model = AutoModelForCausalLM.from_pretrained(
-        model_name, torch_dtype=torch.float16, quantization_config=bnb_config
+        model_name, torch_dtype=torch.float16, quantization_config=bnb_config, cache_dir=local_dir
     )
     return model, tokenizer
 
