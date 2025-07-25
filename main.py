@@ -69,7 +69,8 @@ if __name__=='__main__':
     load_save_hf_repo(EXPERT_REPO_ID, local_dir="language_adapters")
     general_model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)
     dataset = load_general_dataset(path=args.dataset_path, data_file=DATA_FILE)
-    sub_dataset = get_samples(your_dataset=dataset, n_samples=args.n_samples, seed=args.seed)
+    sub_dataset = get_samples(your_dataset=dataset['test'], n_samples=args.n_samples, seed=args.seed)
+    print(f"------------- Subsampling from {args.dataset_path} has been finished and enhanced model is starting to be processed------------------------")
     enhanced_model = apply_arrow_or_gks(
         base_model_name=args.base_model_name,
         cluster_names=CLUSTER_NAMES,
@@ -79,3 +80,4 @@ if __name__=='__main__':
         language_experts=LANGUAGE_EXPERTS,
         target_modules=TARGET_MODULES
     )
+    print(enhanced_model)
