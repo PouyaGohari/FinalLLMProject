@@ -7,6 +7,8 @@ import torch
 
 import os
 import logging
+import random
+import numpy as np
 
 from utils.config import *
 from typing import (
@@ -18,12 +20,20 @@ from MyArgParser import arg_parser
 from my_cka import (
     load_general_dataset,
     apply_arrow_or_gks,
-    get_samples, create_torch_dataset
+    get_samples, create_torch_dataset,
+    dataloader,
+    apply_cka
 )
 
 logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
 
-def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[AutoTokenizer, AutoModelForCausalLM]:
+def set_seed(seed: int):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
     """
     This function will load the quantized version of specified model.
     :param model_name: The model name
@@ -64,7 +74,7 @@ def load_save_hf_repo(repo_id: str,  local_dir: str="language_adapters") -> None
 
 if __name__=='__main__':
     args = arg_parser()
-
+    set_seed(args.seed)
     login(token=args.hf_token)
     load_save_hf_repo(CLUSTER_REPO_ID, local_dir="clusters")
     load_save_hf_repo(EXPERT_REPO_ID, local_dir="language_adapters")
@@ -76,16 +86,40 @@ if __name__=='__main__':
 
     print(f"------------- Subsampling from {args.dataset_path} has been finished and enhanced model is starting to be processed------------------------")
 
-    # enhanced_model = apply_arrow_or_gks(
-    #     base_model_name=args.base_model_name,
-    #     cluster_names=CLUSTER_NAMES,
-    #     arrow_top_k=args.top_k,
-    #     arrow_router_temperature=args.temperature,
-    #     gks=args.gks,
-    #     language_experts=LANGUAGE_EXPERTS,
-    #     target_modules=TARGET_MODULES
-    # )
+    enhanced_model = apply_arrow_or_gks(
+        base_model_name=args.base_model_name,
+        cluster_names=CLUSTER_NAMES,
+        arrow_top_k=args.top_k,
+        arrow_router_temperature=args.temperature,
+        gks=args.gks,
+        language_experts=LANGUAGE_EXPERTS,
+        target_modules=TARGET_MODULES
+    )
+
+    my_generator = torch.Generator()
+    my_generator.manual_seed(args.seed)
 
     compatible_dataset = create_torch_dataset(sub_dataset, tokenizer)
-    print(compatible_dataset[0])
-    print(len(compatible_dataset[0]['input_ids']), len(compatible_dataset[0]['attention_mask']))
+
+    my_dataloader = dataloader(
+        compatible_dataset=compatible_dataset,
+        generator=my_generator
+    )
+
+    print(f"------------- Starting to apply cka -------------")
+
+    if args.gks:
+        second_model_name = "GenKowlSub"
+    else:
+        second_model_name = "Arrow"
+
+    exported_data = apply_cka(
+        first_loader=my_dataloader,
+        base_model=general_model,
+        enhanced_model=enhanced_model,
+        first_model_name="Baseline",
+        second_model_name=second_model_name,
+        export_data=args.export_data,
+        show_plot=args.show_plot,
+        device=args.device
+    )
