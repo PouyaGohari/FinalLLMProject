@@ -62,6 +62,7 @@ def apply_arrow_or_gks(
         if cluster_name != "cluster0":
             model.load_adapter(cluster_dir, adapter_name=cluster_name)
     if gks:
+        print(f"The gks parameter is set{gks} and we are in gks mode.")
         for language_name_expert, language_expert_dir in language_experts.items():
             model.load_adapter(language_expert_dir, adapter_name=language_name_expert)
         arrow_config = LoraConfig(
@@ -76,6 +77,7 @@ def apply_arrow_or_gks(
             target_modules=target_modules
         )
     else:
+        print(f"The gks parameter is set{gks} and we are in router without gks.")
         arrow_config = LoraConfig(
             r=2,  # dummy rank since A and B won't be used!
             use_arrow=True,  # This will turn this LoRA to the ArrowLoraVariant
