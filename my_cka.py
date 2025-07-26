@@ -71,8 +71,8 @@ def apply_arrow_or_gks(
             arrow_top_k=arrow_top_k,  # Number of selected task-specific LoRAs for each token in each layer
             arrow_router_temperature=arrow_router_temperature,
             use_gks=gks,  # ← enable GenKnowSub!
-            le_names=List(language_experts.keys()),  # name of loaded general-domain LoRAs
-            ts_names=List(cluster_names.keys()),  # name of loaded task-specific LoRAs
+            le_names=list(language_experts.keys()),  # name of loaded general-domain LoRAs
+            ts_names=list(cluster_names.keys()),  # name of loaded task-specific LoRAs
             target_modules=target_modules
         )
     else:
@@ -83,7 +83,7 @@ def apply_arrow_or_gks(
             arrow_top_k=arrow_top_k,  # Number of selected task-specific LoRAs for each token in each layer
             arrow_router_temperature=arrow_router_temperature,
             use_gks=gks,  # ← enable GenKnowSub!
-            le_names=List(language_experts.keys()),  # name of loaded general-domain LoRAs
+            le_names=list(language_experts.keys()),  # name of loaded general-domain LoRAs
             target_modules=target_modules
         )
     model.add_adapter(adapter_name="router", peft_config=arrow_config)
