@@ -22,7 +22,7 @@ class CustomDataset(Dataset):
         text = self.tokenizer.apply_chat_template(
             [user],
             add_generation_prompt=True,
-            padding=True,
+            padding='max_length',
             truncation=True,
             tokenize=True,
             max_length=MAX_LENGTH,
