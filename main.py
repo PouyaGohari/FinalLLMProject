@@ -18,7 +18,7 @@ from MyArgParser import arg_parser
 from my_cka import (
     load_general_dataset,
     apply_arrow_or_gks,
-    get_samples
+    get_samples, create_torch_dataset
 )
 
 logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
@@ -64,21 +64,27 @@ def load_save_hf_repo(repo_id: str,  local_dir: str="language_adapters") -> None
 
 if __name__=='__main__':
     args = arg_parser()
-    print(args)
+
     login(token=args.hf_token)
     load_save_hf_repo(CLUSTER_REPO_ID, local_dir="clusters")
     load_save_hf_repo(EXPERT_REPO_ID, local_dir="language_adapters")
+
     general_model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)
+
     dataset = load_general_dataset(path=args.dataset_path, data_file=DATA_FILE)
     sub_dataset = get_samples(your_dataset=dataset['test'], n_samples=args.n_samples, seed=args.seed)
+
     print(f"------------- Subsampling from {args.dataset_path} has been finished and enhanced model is starting to be processed------------------------")
-    enhanced_model = apply_arrow_or_gks(
-        base_model_name=args.base_model_name,
-        cluster_names=CLUSTER_NAMES,
-        arrow_top_k=args.top_k,
-        arrow_router_temperature=args.temperature,
-        gks=args.gks,
-        language_experts=LANGUAGE_EXPERTS,
-        target_modules=TARGET_MODULES
-    )
-    print(enhanced_model)
+
+    # enhanced_model = apply_arrow_or_gks(
+    #     base_model_name=args.base_model_name,
+    #     cluster_names=CLUSTER_NAMES,
+    #     arrow_top_k=args.top_k,
+    #     arrow_router_temperature=args.temperature,
+    #     gks=args.gks,
+    #     language_experts=LANGUAGE_EXPERTS,
+    #     target_modules=TARGET_MODULES
+    # )
+
+    compatible_dataset = create_torch_dataset(sub_dataset, tokenizer)
+    print(compatible_dataset[0])
