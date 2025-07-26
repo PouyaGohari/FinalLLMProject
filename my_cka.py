@@ -1,18 +1,8 @@
 import torch_cka
-
 import torch
-from torch.utils.data import (
-    dataset,
-    dataloader
-)
-
-import numpy
-import seaborn as sns
-import pandas as pd
 
 import datasets
-
-from utils.config import *
+from custam_dataset import CustomDataset
 
 from transformers import (
     AutoTokenizer,
@@ -109,3 +99,16 @@ def get_samples(your_dataset:datasets, n_samples:int, seed:int=42) -> datasets:
     Subset of corresponding dataset.
     """
     return your_dataset.shuffle(seed).select(range(n_samples))
+
+def create_torch_dataset(dataset:datasets, tokenizer:AutoTokenizer.from_pretrained) -> CustomDataset:
+    """
+    This function will create custom dataset compatible with torch dataset.
+    :param dataset: The text dataset(it must be for testing purpose.)
+    :param tokenizer: The tokenizer to tokenize each input text.
+    :return:
+    CustomDataset.
+    """
+    return CustomDataset(
+        text_dataset=dataset,
+        tokenizer=tokenizer
+    )
