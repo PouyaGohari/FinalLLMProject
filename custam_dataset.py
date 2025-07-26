@@ -29,6 +29,6 @@ class CustomDataset(Dataset):
             return_tensors="pt",
             return_dict=True,
         )
-        input_ids = text['input_ids']
-        attention_mask = text['attention_mask']
+        input_ids = text['input_ids'].squeeze(0)
+        attention_mask = text['attention_mask'].squeeze(0)
         return {"input_ids":input_ids, 'attention_mask':attention_mask}
