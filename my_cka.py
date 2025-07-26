@@ -1,6 +1,6 @@
-import torch_cka
+from torch_cka import CKA
 import torch
-
+from torch.utils.data import DataLoader
 import datasets
 from custam_dataset import CustomDataset
 
@@ -14,7 +14,8 @@ from peft import PeftModel, LoraConfig
 
 from typing import (
     Dict,
-    List
+    List,
+    Optional
 )
 
 def apply_arrow_or_gks(
@@ -112,3 +113,63 @@ def create_torch_dataset(dataset:datasets, tokenizer:AutoTokenizer.from_pretrain
         text_dataset=dataset,
         tokenizer=tokenizer
     )
+
+def dataloader(compatible_dataset:CustomDataset, generator:torch.Generator, batch:int=8, shuffle:bool=True) -> DataLoader:
+    """
+    This function will create a data loader.
+    :param compatible_dataset: A custom dataset instantiated form class above.
+    :param batch: The number of samples in each batch.
+    :param shuffle: Shuffling dataset before batching.
+    :param generator: The generator for reproducibility
+    :return:
+    DataLoader.
+    """
+    return DataLoader(compatible_dataset, batch_size=batch, shuffle=shuffle, generator=generator)
+
+def apply_cka(
+        first_loader:DataLoader,
+        base_model:AutoModelForCausalLM,
+        enhanced_model:PeftModel,
+        first_model_name:str,
+        second_model_name:str,
+        export_data:Optional[bool] = False,
+        show_plot:Optional[bool] = False,
+        base_model_layers: Optional[List[str]] = None,
+        enhanced_model_layers: Optional[List[str]] = None,
+        second_loader: Optional[DataLoader] = None,
+        device:str='cuda',
+    ) -> Optional[Dict]:
+    """
+    This function will compare two given models and two different dataset as you wish just like documentation of the torch_cka library.
+    :param first_loader: The data loader for first dataset.
+    :param base_model: The first model in our case base model.
+    :param enhanced_model:  The configured model like general knowledge subtracted model or arrow itsel model.
+    :param first_model_name: The name of first model.
+    :param second_model_name: The name of second model.
+    :param export_data: If you want to export the data after comparing two models.
+    :param show_plot: If you want to plot the data after comparing two models.
+    :param base_model_layers: The specified layer of the base model.
+    :param enhanced_model_layers: The specified layer of the second model.
+    :param second_loader: If you have two dataset, pass the second loader correspond to that.
+    :param device: If you want to use cuda or cpu.
+    :return:
+    If export_data has been set to true it would return a dictionary contain the data after comparing two models otherwise None would be returned.
+    """
+    cka = CKA(
+        model1=base_model,
+        model2=enhanced_model,
+        model1_name=first_model_name,
+        model2_name=second_model_name,
+        model1_layers=base_model_layers,
+        model2_layers=enhanced_model_layers,
+        device=device
+    )
+    cka.compare(
+        dataloader1=first_loader,
+        dataloader2=second_loader,
+    )
+    if show_plot:
+        cka.plot_results()
+    if export_data:
+        return cka.export()
+    return None
