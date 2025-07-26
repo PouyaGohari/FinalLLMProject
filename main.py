@@ -88,3 +88,4 @@ if __name__=='__main__':
 
     compatible_dataset = create_torch_dataset(sub_dataset, tokenizer)
     print(compatible_dataset[0])
+    print(len(compatible_dataset[0]['input_ids']), len(compatible_dataset[0]['attention_mask']))
