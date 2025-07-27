@@ -100,6 +100,7 @@ if __name__=='__main__':
     my_generator.manual_seed(args.seed)
 
     compatible_dataset = create_torch_dataset(sub_dataset, tokenizer)
+    print(compatible_dataset[0])
 
     my_dataloader = dataloader(
         compatible_dataset=compatible_dataset,
