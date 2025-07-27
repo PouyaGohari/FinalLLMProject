@@ -33,7 +33,7 @@ def set_seed(seed: int):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
+def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[AutoModelForCausalLM.from_pretrained, AutoTokenizer.from_pretrained]:
     """
     This function will load the quantized version of specified model.
     :param model_name: The model name
@@ -113,14 +113,16 @@ if __name__=='__main__':
         second_model_name = "GenKowlSub"
     else:
         second_model_name = "Arrow"
-
-    exported_data = apply_cka(
-        first_loader=my_dataloader,
-        base_model=general_model,
-        enhanced_model=enhanced_model,
-        first_model_name="Baseline",
-        second_model_name=second_model_name,
-        export_data=args.export_data,
-        show_plot=args.show_plot,
-        device=args.device
-    )
+    print([k for k in general_model.state_dict().keys() if 'self_attn' in k])
+    # exported_data = apply_cka(
+    #     first_loader=my_dataloader,
+    #     base_model=general_model,
+    #     base_model_layers=[f"model.layers.{i}.self_attn.o_proj.weight" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj.weight" for i in range(31)],
+    #
+    #     enhanced_model=enhanced_model,
+    #     first_model_name="Baseline",
+    #     second_model_name=second_model_name,
+    #     export_data=args.export_data,
+    #     show_plot=args.show_plot,
+    #     device=args.device
+    # )
