@@ -10,7 +10,6 @@ import logging
 import random
 import numpy as np
 
-from utils.config import *
 from typing import (
     Tuple
 )
