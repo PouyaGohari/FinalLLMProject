@@ -6,6 +6,7 @@ The implementation is designed to be flexible, extensible, and suitable for expe
 - [Introduction](#introduction)
 - [Usage](#usage)
 - [Example](#examples)
+- [Requirements](#requirements)
 
 # Introduction
 This project analyzes two different models using the CKA (Centered Kernel Alignment) metric. It serves as the final project for the LLM
@@ -19,8 +20,12 @@ to explore how these techniques influence the general knowledge encoded in large
 We develop our code in a modular fashion, but run the scripts in a Colab environment.
 To get started, please review the [guidance](Guidance.text), and copy the installation instructions into the first cell of your Jupyter notebook.
 
-After cloning our repository ([repo](https://github.com/PouyaGohari/FinalLLMProject.git)), run the `main.py` script as follows:
+After cloning our repository ([repo](https://github.com/PouyaGohari/FinalLLMProject.git)), you should install the [requirements](requirements.txt):
 
+```
+!pip install -qU -r /content/FinalLLMProject/requirements.txt
+```
+Then you can run the script below:
 ```
 !python "/content/FinalLLMProject/main.py" --your_arguments_here
 ```
@@ -28,3 +33,7 @@ For a full list of available command-line arguments, please see the [MyArgParser
 
 # Examples
 For a usage example, please refer to the code provided in the [main.py](main.py) file.
+
+# Requirements
+As mentioned in the Guidance, you should first install the appropriate version of peft as described, and then install the remaining packages listed in [requirements](requirements.text).
+
