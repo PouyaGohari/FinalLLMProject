@@ -8,7 +8,14 @@ In this project, we apply both the Arrow method and general knowledge subtractio
 to explore how these techniques influence the general knowledge encoded in large language models.
 # Usage
 We develop our code in a modular fashion, but run the scripts in a Colab environment.
-To get started, please review the [Guidance file](Guidance ), and copy the installation instructions into the first cell of your Jupyter note
+To get started, please review the [guidance](Guidance.text), and copy the installation instructions into the first cell of your Jupyter notebook.
+
+After cloning our repository ([repo](https://github.com/PouyaGohari/FinalLLMProject.git)), run the `main.py` script as follows:
+
+```
+!python "\main.py" --your_arguments_here
+```
+For a full list of available command-line arguments, please see the [MyArgParser.py](MyArgParser.py) file.
 
 # Examples
-For a usage example, please refer to the code provided in the main.py file.
+For a usage example, please refer to the code provided in the [main.py](main.py) file.
