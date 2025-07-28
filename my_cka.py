@@ -2,7 +2,7 @@ from torch_cka import CKA
 import torch
 from torch.utils.data import DataLoader
 import datasets
-from custam_dataset import CustomDataset
+from custom_dataset import CustomDataset
 
 from transformers import (
     AutoTokenizer,
