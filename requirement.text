@@ -1,0 +1,5 @@
+transformers
+bitsandbytes
+datasets
+hf-xet
+torch_cka
