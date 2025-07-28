@@ -1,8 +1,7 @@
 from torch.utils.data import Dataset
 from transformers import AutoTokenizer
 import datasets
-from utils.config import *
-
+from MyConfig import *
 
 class CustomDataset(Dataset):
     def __init__(self, text_dataset:datasets, tokenizer:AutoTokenizer.from_pretrained):
