@@ -1,4 +1,13 @@
-# Description
+# FinalLLMProject
+This repository contains modular, well-documented code for analyzing large language models using the CKA metric.
+The implementation is designed to be flexible, extensible, and suitable for experiments with different model architectures and evaluation setups.
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Usage](#usage)
+- [Example](#examples)
+
+# Introduction
 This project analyzes two different models using the CKA (Centered Kernel Alignment) metric. It serves as the final project for the LLM
 course at the University of Tehran (UT), focusing on evaluating models in line with the methodology
 from this [paper](https://arxiv.org/abs/2505.10939). Our primary goal is to investigate the impact of general knowledge subtraction on 
