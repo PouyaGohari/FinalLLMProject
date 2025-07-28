@@ -7,3 +7,4 @@ CLUSTER_NAMES = {f'cluster{i}':f'/content/clusters/cluster{i}' for i in range(10
 LANGUAGE_EXPERTS = {'English_adapter': '/content/language_adapters/le_experts_phi3_diff_lang/cluster0_batch16_prop1.0_langen/checkpoint-16'}
 DATA_FILE = {'train': 'en_Wiki_10k_LM_511_1 (1).json', 'test': 'en_Wiki_10k_LM_511_1_test (1).json'}
 TARGET_MODULES = ["qkv_proj", "o_proj"]
+MAX_LENGTH = 4000
