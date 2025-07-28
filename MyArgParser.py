@@ -16,6 +16,7 @@ def arg_parser():
     ## For downloading general dataset like wiki dataset.
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--dataset_path", default=None, type=str)
+    parser.add_argument("__batch", default=8, type=int)
     ## For applying cka
     parser.add_argument("--export_data", action="store_true")
     parser.add_argument("--show_plot", action="store_true")
