@@ -103,6 +103,7 @@ if __name__=='__main__':
 
     my_dataloader = dataloader(
         compatible_dataset=compatible_dataset,
+        batch=args.batch,
         generator=my_generator
     )
 
