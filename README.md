@@ -13,7 +13,7 @@ To get started, please review the [guidance](Guidance.text), and copy the instal
 After cloning our repository ([repo](https://github.com/PouyaGohari/FinalLLMProject.git)), run the `main.py` script as follows:
 
 ```
-!python "\main.py" --your_arguments_here
+!python "/content/FinalLLMProject/main.py" --your_arguments_here
 ```
 For a full list of available command-line arguments, please see the [MyArgParser.py](MyArgParser.py) file.
 
