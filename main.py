@@ -106,24 +106,24 @@ if __name__=='__main__':
         batch=args.batch,
         generator=my_generator
     )
-
-    print(f"------------- Starting to apply cka -------------")
-
-    if args.gks:
-        second_model_name = "GenKowlSub"
-    else:
-        second_model_name = "Arrow"
-
-    layers_of_interest = [f"model.layers.{i}.self_attn.o_proj.weight" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj.weight" for i in range(31)]
-    exported_data = apply_cka(
-        first_loader=my_dataloader,
-        base_model=general_model,
-        base_model_layers=layers_of_interest,
-        enhanced_model_layers=layers_of_interest,
-        enhanced_model=enhanced_model,
-        first_model_name="Baseline",
-        second_model_name=second_model_name,
-        export_data=args.export_data,
-        show_plot=args.show_plot,
-        device=args.device
-    )
+    #
+    # print(f"------------- Starting to apply cka -------------")
+    #
+    # if args.gks:
+    #     second_model_name = "GenKowlSub"
+    # else:
+    #     second_model_name = "Arrow"
+    #
+    # layers_of_interest = [f"model.layers.{i}.self_attn.o_proj.weight" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj.weight" for i in range(31)]
+    # exported_data = apply_cka(
+    #     first_loader=my_dataloader,
+    #     base_model=general_model,
+    #     base_model_layers=layers_of_interest,
+    #     enhanced_model_layers=layers_of_interest,
+    #     enhanced_model=enhanced_model,
+    #     first_model_name="Baseline",
+    #     second_model_name=second_model_name,
+    #     export_data=args.export_data,
+    #     show_plot=args.show_plot,
+    #     device=args.device
+    # )
