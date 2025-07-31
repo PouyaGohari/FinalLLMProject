@@ -27,4 +27,4 @@ class CustomDataset(Dataset):
             max_length=MAX_LENGTH,
             return_tensors="pt",
         )
-        return text
+        return text.squeeze()
