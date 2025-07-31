@@ -107,6 +107,8 @@ if __name__=='__main__':
         batch=args.batch,
         generator=my_generator
     )
+    for batch in my_dataloader:
+        print(tokenizer.decode(batch[0]))
     #
     # print(f"------------- Starting to apply cka -------------")
     #
