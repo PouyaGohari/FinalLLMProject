@@ -97,6 +97,7 @@ if __name__=='__main__':
 
     my_generator = torch.Generator()
     my_generator.manual_seed(args.seed)
+    print(sub_dataset[0])
 
     compatible_dataset = create_torch_dataset(sub_dataset, tokenizer)
     print(compatible_dataset[0])
