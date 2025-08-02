@@ -3,6 +3,8 @@ import torch
 from torch.utils.data import DataLoader
 import datasets
 from custom_dataset import CustomDataset
+from tqdm import tqdm
+from warnings import warn
 
 from transformers import (
     AutoTokenizer,
@@ -49,7 +51,58 @@ class CustomCKA(CKA):
         result += ((ones.t() @ K @ ones @ ones.t() @ L @ ones) / ((N - 1) * (N - 2))).item()
         result -= ((ones.t() @ K @ L @ ones) * 2 / (N - 2)).item()
         return (1 / (N * (N - 3)) * result).item()
+    def compare(self,
+                dataloader1: DataLoader,
+                dataloader2: DataLoader = None) -> None:
+        """
+        Computes the feature similarity between the models on the
+        given datasets.
+        :param dataloader1: (DataLoader)
+        :param dataloader2: (DataLoader) If given, model 2 will run on this
+                            dataset. (default = None)
+        """
 
+        if dataloader2 is None:
+            warn("Dataloader for Model 2 is not given. Using the same dataloader for both models.")
+            dataloader2 = dataloader1
+
+        self.model1_info['Dataset'] = dataloader1.dataset.__repr__().split('\n')[0]
+        self.model2_info['Dataset'] = dataloader2.dataset.__repr__().split('\n')[0]
+
+        N = len(self.model1_layers) if self.model1_layers is not None else len(list(self.model1.modules()))
+        M = len(self.model2_layers) if self.model2_layers is not None else len(list(self.model2.modules()))
+
+        self.hsic_matrix = torch.zeros(N, M, 3)
+
+        num_batches = min(len(dataloader1), len(dataloader1))
+
+        for (x1, *_), (x2, *_) in tqdm(zip(dataloader1, dataloader2), desc="| Comparing features |", total=num_batches):
+
+            self.model1_features = {}
+            self.model2_features = {}
+            _ = self.model1(x1.to(self.device))
+            _ = self.model2(x2.to(self.device))
+
+            for i, (name1, feat1) in enumerate(self.model1_features.items()):
+                print("yes")
+                X = feat1.flatten(1)
+                K = X @ X.t()
+                K.fill_diagonal_(0.0)
+                self.hsic_matrix[i, :, 0] += self._HSIC(K, K) / num_batches
+
+                for j, (name2, feat2) in enumerate(self.model2_features.items()):
+                    Y = feat2.flatten(1)
+                    L = Y @ Y.t()
+                    L.fill_diagonal_(0)
+                    assert K.shape == L.shape, f"Feature shape mismatch! {K.shape}, {L.shape}"
+
+                    self.hsic_matrix[i, j, 1] += self._HSIC(K, L) / num_batches
+                    self.hsic_matrix[i, j, 2] += self._HSIC(L, L) / num_batches
+
+        self.hsic_matrix = self.hsic_matrix[:, :, 1] / (self.hsic_matrix[:, :, 0].sqrt() *
+                                                        self.hsic_matrix[:, :, 2].sqrt())
+
+        assert not torch.isnan(self.hsic_matrix).any(), "HSIC computation resulted in NANs"
 
 def apply_arrow_or_gks(
         base_model_name:str,
@@ -202,11 +255,6 @@ def apply_cka(
         dataloader1=first_loader,
         dataloader2=second_loader,
     )
-    print(cka.model1_features)
-    for name, feat in cka.model1_features.items():
-        print(f"{name}: shape={feat.shape}, nan={torch.isnan(feat).any().item()}, zero={torch.all(feat == 0).item()}")
-    for name, feat in cka.model2_features.items():
-        print(f"{name}: shape={feat.shape}, nan={torch.isnan(feat).any().item()}, zero={torch.all(feat == 0).item()}")
 
     if show_plot:
         cka.plot_results()
