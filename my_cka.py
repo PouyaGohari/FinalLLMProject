@@ -164,6 +164,10 @@ def apply_cka(
         model2_layers=enhanced_model_layers,
         device=device
     )
+
+    print("Collected model1 features:", cka.model1_features.keys())
+    print("Collected model2 features:", cka.model2_features.keys())
+
     cka.compare(
         dataloader1=first_loader,
         dataloader2=second_loader,
