@@ -94,7 +94,7 @@ if __name__=='__main__':
     #     language_experts=LANGUAGE_EXPERTS,
     #     target_modules=TARGET_MODULES
     # )
-    enhanced_model, _ = model_and_tokenizer(model_name=MODEL_NAME)
+    enhanced_model, _ = model_and_tokenizer(model_name="Qwen/Qwen1.5-1.8B-Chat")
 
     my_generator = torch.Generator()
     my_generator.manual_seed(args.seed)
