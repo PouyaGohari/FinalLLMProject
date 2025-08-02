@@ -18,6 +18,39 @@ from typing import (
     Optional
 )
 
+class CustomCKA(CKA):
+    def __init__(self,
+        base_model:AutoModelForCausalLM,
+        enhanced_model:PeftModel,
+        first_model_name:str,
+        second_model_name:str,
+        base_model_layers: Optional[List[str]] = None,
+        enhanced_model_layers: Optional[List[str]] = None,
+        device:str='cuda'):
+        super().__init__(
+            model1=base_model,
+            model2=enhanced_model,
+            model1_name=first_model_name,
+            model2_name=second_model_name,
+            model1_layers=base_model_layers,
+            model2_layers=enhanced_model_layers,
+            device=device
+        )
+
+    def _HSIC(self, K, L):
+        """
+        Computes the unbiased estimate of HSIC metric.
+
+        Reference: https://arxiv.org/pdf/2010.15327.pdf Eq (3)
+        """
+        N = K.shape[0]
+        ones = torch.ones(N, 1, dtype=K.dtype, device=self.device)
+        result = torch.trace(K @ L)
+        result += ((ones.t() @ K @ ones @ ones.t() @ L @ ones) / ((N - 1) * (N - 2))).item()
+        result -= ((ones.t() @ K @ L @ ones) * 2 / (N - 2)).item()
+        return (1 / (N * (N - 3)) * result).item()
+
+
 def apply_arrow_or_gks(
         base_model_name:str,
         cluster_names:Dict,
@@ -155,18 +188,18 @@ def apply_cka(
     :return:
     If export_data has been set to true it would return a dictionary contain the data after comparing two models otherwise None would be returned.
     """
-    cka = CKA(
-        model1=base_model,
-        model2=enhanced_model,
-        model1_name=first_model_name,
-        model2_name=second_model_name,
-        model1_layers=base_model_layers,
-        model2_layers=enhanced_model_layers,
-        device=device
+    cka = CustomCKA(
+        base_model,
+        enhanced_model,
+        first_model_name,
+        second_model_name,
+        base_model_layers,
+        enhanced_model_layers,
+        device
     )
 
-    print("Collected model1 features:", cka.model1_features.keys())
-    print("Collected model2 features:", cka.model2_features.keys())
+    print("Collected model1 features:", cka.model1_layers)
+    print("Collected model2 features:", cka.model2_layers)
 
     cka.compare(
         dataloader1=first_loader,
