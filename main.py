@@ -116,8 +116,10 @@ if __name__=='__main__':
         second_model_name = "GenKowlSub"
     else:
         second_model_name = "Arrow"
-
     layers_of_interest = [f"model.layers.{i}.self_attn.o_proj.weight" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj.weight" for i in range(31)]
+    for name, layer in general_model.named_modules():
+        if layer in layers_of_interest:
+            print("yes")
     exported_dat = apply_cka(
         first_loader=my_dataloader,
         base_model=general_model,
