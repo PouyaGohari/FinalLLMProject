@@ -85,15 +85,16 @@ if __name__=='__main__':
 
     print(f"------------- Subsampling from {args.dataset_path} has been finished and enhanced model is starting to be processed------------------------")
 
-    enhanced_model = apply_arrow_or_gks(
-        base_model_name=args.base_model_name,
-        cluster_names=CLUSTER_NAMES,
-        arrow_top_k=args.top_k,
-        arrow_router_temperature=args.temperature,
-        gks=args.gks,
-        language_experts=LANGUAGE_EXPERTS,
-        target_modules=TARGET_MODULES
-    )
+    # enhanced_model = apply_arrow_or_gks(
+    #     base_model_name=args.base_model_name,
+    #     cluster_names=CLUSTER_NAMES,
+    #     arrow_top_k=args.top_k,
+    #     arrow_router_temperature=args.temperature,
+    #     gks=args.gks,
+    #     language_experts=LANGUAGE_EXPERTS,
+    #     target_modules=TARGET_MODULES
+    # )
+    enhanced_model, _ = model_and_tokenizer(model_name=MODEL_NAME)
 
     my_generator = torch.Generator()
     my_generator.manual_seed(args.seed)
