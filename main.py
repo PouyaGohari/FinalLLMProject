@@ -118,20 +118,18 @@ if __name__=='__main__':
         second_model_name = "Arrow"
 
     layers_of_interest = [f"model.layers.{i}.self_attn.o_proj.weight" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj.weight" for i in range(31)]
-    results = []
-    for layer in layers_of_interest:
-        exported_dat = apply_cka(
-            first_loader=my_dataloader,
-            base_model=general_model,
-            base_model_layers=[layer],
-            enhanced_model_layers=layers_of_interest,
-            enhanced_model=enhanced_model,
-            first_model_name="Baseline",
-            second_model_name=second_model_name,
-            export_data=args.export_data,
-            show_plot=args.show_plot,
-            device=args.device
-        )
-        torch.cuda.empty_cache()
-        results.append(exported_dat)
-    print(results)
+    # results = []
+    # for layer in layers_of_interest:
+    exported_dat = apply_cka(
+        first_loader=my_dataloader,
+        base_model=general_model,
+        base_model_layers=layers_of_interest,
+        enhanced_model_layers=layers_of_interest,
+        enhanced_model=enhanced_model,
+        first_model_name="Baseline",
+        second_model_name=second_model_name,
+        export_data=args.export_data,
+        show_plot=args.show_plot,
+        device=args.device
+    )
+    # print(results)
