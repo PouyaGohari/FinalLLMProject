@@ -85,16 +85,16 @@ if __name__=='__main__':
 
     print(f"------------- Subsampling from {args.dataset_path} has been finished and enhanced model is starting to be processed------------------------")
 
-    # enhanced_model = apply_arrow_or_gks(
-    #     base_model_name=args.base_model_name,
-    #     cluster_names=CLUSTER_NAMES,
-    #     arrow_top_k=args.top_k,
-    #     arrow_router_temperature=args.temperature,
-    #     gks=args.gks,
-    #     language_experts=LANGUAGE_EXPERTS,
-    #     target_modules=TARGET_MODULES
-    # )
-    enhanced_model, _ = model_and_tokenizer(model_name="Qwen/Qwen1.5-1.8B-Chat")
+    enhanced_model = apply_arrow_or_gks(
+        base_model_name=args.base_model_name,
+        cluster_names=CLUSTER_NAMES,
+        arrow_top_k=args.top_k,
+        arrow_router_temperature=args.temperature,
+        gks=args.gks,
+        language_experts=LANGUAGE_EXPERTS,
+        target_modules=TARGET_MODULES
+    )
+
 
     my_generator = torch.Generator()
     my_generator.manual_seed(args.seed)
@@ -117,14 +117,12 @@ if __name__=='__main__':
     else:
         second_model_name = "Arrow"
 
-    # layers_of_interest = [f"model.layers.{i}.self_attn.o_proj.weight" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj.weight" for i in range(31)]
-    # results = []
-    # for layer in layers_of_interest:
+    layers_of_interest = [f"model.layers.{i}.self_attn.o_proj.weight" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj.weight" for i in range(31)]
     exported_dat = apply_cka(
         first_loader=my_dataloader,
         base_model=general_model,
-        # base_model_layers=layers_of_interest,
-        # enhanced_model_layers=layers_of_interest,
+        base_model_layers=layers_of_interest,
+        enhanced_model_layers=layers_of_interest,
         enhanced_model=enhanced_model,
         first_model_name="Baseline",
         second_model_name=second_model_name,
@@ -132,4 +130,3 @@ if __name__=='__main__':
         show_plot=args.show_plot,
         device=args.device
     )
-    # print(results)
