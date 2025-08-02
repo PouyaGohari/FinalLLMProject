@@ -197,9 +197,10 @@ def apply_cka(
         enhanced_model_layers,
         device
     )
-
-    print("Collected model1 features:", cka.model1_layers)
-    print("Collected model2 features:", cka.model2_layers)
+    for name, feat in cka.model1_features.items():
+        print(f"{name}: shape={feat.shape}, nan={torch.isnan(feat).any().item()}, zero={torch.all(feat == 0).item()}")
+    for name, feat in cka.model2_features.items():
+        print(f"{name}: shape={feat.shape}, nan={torch.isnan(feat).any().item()}, zero={torch.all(feat == 0).item()}")
 
     cka.compare(
         dataloader1=first_loader,
