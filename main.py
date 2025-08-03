@@ -70,12 +70,11 @@ if __name__=='__main__':
 
     enhanced_model = apply_arrow_or_gks(
         base_model_name=args.base_model_name,
-        cluster_names=CLUSTER_NAMES,
+        cluster_names=list(CLUSTER_NAMES.values()),
         arrow_top_k=args.top_k,
         arrow_router_temperature=args.temperature,
         gks=args.gks,
-        language_experts=LANGUAGE_EXPERTS,
-        target_modules=TARGET_MODULES
+        language_experts=list(LANGUAGE_EXPERTS.values()),
     )
 
 
