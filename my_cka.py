@@ -84,7 +84,6 @@ class CustomCKA(CKA):
             _ = self.model2(x2.to(self.device))
 
             for i, (name1, feat1) in enumerate(self.model1_features.items()):
-                print("yes")
                 X = feat1.flatten(1)
                 K = X @ X.t()
                 K.fill_diagonal_(0.0)
@@ -98,6 +97,8 @@ class CustomCKA(CKA):
 
                     self.hsic_matrix[i, j, 1] += self._HSIC(K, L) / num_batches
                     self.hsic_matrix[i, j, 2] += self._HSIC(L, L) / num_batches
+            print("K nan:", torch.isnan(K).any().item(), "K zero:", torch.all(K == 0).item())
+            print("L nan:", torch.isnan(L).any().item(), "L zero:", torch.all(L == 0).item())
 
         self.hsic_matrix = self.hsic_matrix[:, :, 1] / (self.hsic_matrix[:, :, 0].sqrt() *
                                                         self.hsic_matrix[:, :, 2].sqrt())
