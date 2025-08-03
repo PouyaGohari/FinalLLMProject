@@ -107,12 +107,11 @@ class CustomCKA(CKA):
 
 def apply_arrow_or_gks(
         base_model_name:str,
-        cluster_names:Dict,
+        cluster_names:List[str],
         arrow_top_k:int,
         arrow_router_temperature:float,
-        gks:bool=False,
-        language_experts:Dict=None,
-        target_modules:List[str] = None
+        gks:Optional[bool],
+        language_experts:Optional[List[str]],
    ) -> PeftModel:
     """
     This function will either apply arrow routing mechanism to adapters or general knowledge subtraction in conjunction with arrow router based on the gks parameter.
@@ -122,7 +121,6 @@ def apply_arrow_or_gks(
     :param arrow_router_temperature: The temperature that applies to softmax of arrow.
     :param gks: If applying general knowledge subtraction.
     :param language_experts: A dictionary where keys are the name of adapters(e.g, English or French) and values contains the paths for corresponding adapters.
-    :param target_modules: The modules where adapters are being target.
     :return:
     A Peft Model where all adapters applied with respect to the method.
     """
