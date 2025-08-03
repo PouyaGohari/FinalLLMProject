@@ -56,27 +56,10 @@ def model_and_tokenizer(model_name: str, local_dir: str ="models") -> Tuple[Auto
     )
     return model, tokenizer
 
-def load_save_hf_repo(repo_id: str,  local_dir: str="language_adapters") -> None :
-    """
-    This function will load the expert model
-    :param repo_id: Repo ID.
-    :param local_dir: The folder we should save the cache.
-    :return:
-    Saving Wiki-adapters in local.
-    """
-    os.makedirs(local_dir, exist_ok=True)
-    snapshot_download(
-        repo_id=repo_id,
-        local_dir=local_dir
-    )
-    print(f"Downloaded the entire repo {repo_id} to {local_dir}/")
-
 if __name__=='__main__':
     args = arg_parser()
     set_seed(args.seed)
     login(token=args.hf_token)
-    load_save_hf_repo(CLUSTER_REPO_ID, local_dir="clusters")
-    load_save_hf_repo(EXPERT_REPO_ID, local_dir="language_adapters")
 
     general_model, tokenizer = model_and_tokenizer(model_name=MODEL_NAME)
 
