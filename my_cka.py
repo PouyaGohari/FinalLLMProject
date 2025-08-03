@@ -12,7 +12,7 @@ from transformers import (
     BitsAndBytesConfig
 )
 ##Note that this is peft from the written in Guidance file
-from peft import ArrowConfig, create_arrow_model
+from peft import ArrowConfig, create_arrow_model, PeftModel
 
 from typing import (
     Dict,
