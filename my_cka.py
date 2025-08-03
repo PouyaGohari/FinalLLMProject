@@ -12,7 +12,7 @@ from transformers import (
     BitsAndBytesConfig
 )
 ##Note that this is peft from the written in Guidance file
-from peft import PeftModel, LoraConfig
+from peft import ArrowConfig, create_arrow_model
 
 from typing import (
     Dict,
@@ -133,39 +133,18 @@ def apply_arrow_or_gks(
         bnb_4bit_use_double_quant=False
     )
     base_model = AutoModelForCausalLM.from_pretrained(base_model_name, torch_dtype=torch.float16, quantization_config=bnb_config)
-    model = PeftModel.from_pretrained(
-        base_model, cluster_names['cluster0'], adapter_name="cluster0"
+    arrow_config = ArrowConfig(
+        arrow_top_k = arrow_top_k,
+        arrow_router_temperature = arrow_router_temperature,
+        use_gks = gks,
     )
-    for cluster_name, cluster_dir in cluster_names.items():
-        if cluster_name != "cluster0":
-            model.load_adapter(cluster_dir, adapter_name=cluster_name)
-    if gks:
-        for language_name_expert, language_expert_dir in language_experts.items():
-            model.load_adapter(language_expert_dir, adapter_name=language_name_expert)
-        arrow_config = LoraConfig(
-            r=2,  # dummy rank since A and B won't be used!
-            use_arrow=True,  # This will turn this LoRA to the ArrowLoraVariant
-            arrow_expert_num=len(cluster_names),  # Number of task-specific modules in each LoRA layer
-            arrow_top_k=arrow_top_k,  # Number of selected task-specific LoRAs for each token in each layer
-            arrow_router_temperature=arrow_router_temperature,
-            use_gks=gks,  # ← enable GenKnowSub!
-            le_names=list(language_experts.keys()),  # name of loaded general-domain LoRAs
-            ts_names=list(cluster_names.keys()),  # name of loaded task-specific LoRAs
-            target_modules=target_modules
-        )
-    else:
-        arrow_config = LoraConfig(
-            r=2,  # dummy rank since A and B won't be used!
-            use_arrow=True,  # This will turn this LoRA to the ArrowLoraVariant
-            arrow_expert_num=len(cluster_names),  # Number of task-specific modules in each LoRA layer
-            arrow_top_k=arrow_top_k,  # Number of selected task-specific LoRAs for each token in each layer
-            arrow_router_temperature=arrow_router_temperature,
-            use_gks=gks,  # ← enable GenKnowSub!
-            ts_names=list(cluster_names.keys()),  # name of loaded task-specific LoRAs
-            target_modules=target_modules
-        )
-    model.add_adapter(adapter_name="router", peft_config=arrow_config)
-    model.set_adapter("router")
+    model = create_arrow_model(
+        base_model = base_model,
+        task_specific_adapter_paths = cluster_names,
+        general_adapter_paths = language_experts,
+        arrow_config = arrow_config,
+    )
+    print(model)
     return model
 
 def load_general_dataset(path:str, data_file:Dict) -> datasets:
