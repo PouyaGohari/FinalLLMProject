@@ -96,10 +96,8 @@ class CustomCKA(CKA):
 
                     self.hsic_matrix[i, j, 1] += self._HSIC(K, L) / num_batches
                     self.hsic_matrix[i, j, 2] += self._HSIC(L, L) / num_batches
-
         self.hsic_matrix = self.hsic_matrix[:, :, 1] / (self.hsic_matrix[:, :, 0].sqrt() *
                                                         self.hsic_matrix[:, :, 2].sqrt())
-
         assert not torch.isnan(self.hsic_matrix).any(), "HSIC computation resulted in NANs"
 
 def apply_arrow_or_gks(
@@ -139,7 +137,6 @@ def apply_arrow_or_gks(
         general_adapter_paths = language_experts,
         arrow_config = arrow_config,
     )
-    print(model)
     return model
 
 def load_general_dataset(path:str, data_file:Dict) -> datasets:
