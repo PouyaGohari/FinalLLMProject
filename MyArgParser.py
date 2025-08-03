@@ -1,8 +1,5 @@
 import argparse
 
-from accelerate.commands.config.default import description
-
-
 def arg_parser():
     parser = argparse.ArgumentParser()
     ## Provide your token
