@@ -77,7 +77,7 @@ class CustomCKA(CKA):
         num_batches = min(len(dataloader1), len(dataloader1))
 
         for (x1, *_), (x2, *_) in tqdm(zip(dataloader1, dataloader2), desc="| Comparing features |", total=num_batches):
-
+            print(x1.shape, x2.shape, x1, x2)
             self.model1_features = {}
             self.model2_features = {}
             _ = self.model1(x1.to(self.device))
@@ -97,8 +97,6 @@ class CustomCKA(CKA):
 
                     self.hsic_matrix[i, j, 1] += self._HSIC(K, L) / num_batches
                     self.hsic_matrix[i, j, 2] += self._HSIC(L, L) / num_batches
-            print("K nan:", torch.isnan(K).any().item(), "K zero:", torch.all(K == 0).item())
-            print("L nan:", torch.isnan(L).any().item(), "L zero:", torch.all(L == 0).item())
 
         self.hsic_matrix = self.hsic_matrix[:, :, 1] / (self.hsic_matrix[:, :, 0].sqrt() *
                                                         self.hsic_matrix[:, :, 2].sqrt())
