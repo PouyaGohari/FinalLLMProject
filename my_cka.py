@@ -76,7 +76,7 @@ class CustomCKA(CKA):
 
         num_batches = min(len(dataloader1), len(dataloader1))
 
-        for (x1, *_), (x2, *_) in tqdm(zip(dataloader1, dataloader2), desc="| Comparing features |", total=num_batches):
+        for x1, x2 in tqdm(zip(dataloader1, dataloader2), desc="| Comparing features |", total=num_batches):
             print(x1.shape, x2.shape, x1, x2)
             self.model1_features = {}
             self.model2_features = {}
