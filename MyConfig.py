@@ -6,3 +6,4 @@ CLUSTER_NAMES = {f'cluster{i}':f"TahaBa/phi3-mini-clustered-flan/ts_expert_{i}" 
 LANGUAGE_EXPERTS = {'English_adapter': 'TahaBa/phi3-mini-general-adapters/cluster0_batch16_prop1.0_langen/checkpoint-16'}
 DATA_FILE = {'train': 'en_Wiki_10k_LM_511_1 (1).json', 'test': 'en_Wiki_10k_LM_511_1_test (1).json'}
 TARGET_MODULES = ["qkv_proj", "o_proj"]
+MAX_LENGTH=1024
