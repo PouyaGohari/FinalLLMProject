@@ -51,6 +51,7 @@ class CustomCKA(CKA):
         result += ((ones.t() @ K @ ones @ ones.t() @ L @ ones) / ((N - 1) * (N - 2))).item()
         result -= ((ones.t() @ K @ L @ ones) * 2 / (N - 2)).item()
         return (1 / (N * (N - 3)) * result).item()
+
     def compare(self,
                 dataloader1: DataLoader,
                 dataloader2: DataLoader = None) -> None:
@@ -79,8 +80,9 @@ class CustomCKA(CKA):
         for x1, x2 in tqdm(zip(dataloader1, dataloader2), desc="| Comparing features |", total=num_batches):
             self.model1_features = {}
             self.model2_features = {}
-            _ = self.model1(x1.to(self.device))
-            _ = self.model2(x2.to(self.device))
+            print(x1.shape)
+            _ = self.model1(x1.squeeze(1).to(self.device))
+            _ = self.model2(x2.squeeze(1).to(self.device))
 
             for i, (name1, feat1) in enumerate(self.model1_features.items()):
                 X = feat1.flatten(1)
@@ -96,6 +98,8 @@ class CustomCKA(CKA):
 
                     self.hsic_matrix[i, j, 1] += self._HSIC(K, L) / num_batches
                     self.hsic_matrix[i, j, 2] += self._HSIC(L, L) / num_batches
+            del x1, x2, _, self.model1_features, self.model2_features
+
         self.hsic_matrix = self.hsic_matrix[:, :, 1] / (self.hsic_matrix[:, :, 0].sqrt() *
                                                         self.hsic_matrix[:, :, 2].sqrt())
         assert not torch.isnan(self.hsic_matrix).any(), "HSIC computation resulted in NANs"
