@@ -1,5 +1,3 @@
-from turtledemo.forest import start
-
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
