@@ -4,7 +4,7 @@ from transformers import (
     BitsAndBytesConfig,
 )
 import torch
-
+import gcc
 import os
 import logging
 import random
@@ -99,15 +99,20 @@ if __name__=='__main__':
     else:
         second_model_name = "Arrow"
     layers_of_interest = [f"model.layers.{i}.self_attn.o_proj" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj" for i in range(31)]
-    exported_dat = apply_cka(
-        first_loader=my_dataloader,
-        base_model=general_model,
-        base_model_layers=layers_of_interest,
-        enhanced_model_layers=layers_of_interest,
-        enhanced_model=enhanced_model,
-        first_model_name="Baseline",
-        second_model_name=second_model_name,
-        export_data=args.export_data,
-        show_plot=args.show_plot,
-        device=args.device
-    )
+    result = []
+    for layer in layers_of_interest:
+        exported_data = apply_cka(
+            first_loader=my_dataloader,
+            base_model=general_model,
+            base_model_layers=layer,
+            enhanced_model_layers=layers_of_interest,
+            enhanced_model=enhanced_model,
+            first_model_name="Baseline",
+            second_model_name=second_model_name,
+            export_data=args.export_data,
+            show_plot=args.show_plot,
+            device=args.device
+        )
+        gcc.collect()
+        torch.cuda.empty_cache()
+        result.append(exported_data)
