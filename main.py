@@ -104,7 +104,7 @@ if __name__=='__main__':
         exported_data = apply_cka(
             first_loader=my_dataloader,
             base_model=general_model,
-            base_model_layers=layer,
+            base_model_layers=[layer],
             enhanced_model_layers=layers_of_interest,
             enhanced_model=enhanced_model,
             first_model_name="Baseline",
