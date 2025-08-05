@@ -4,7 +4,7 @@ from transformers import (
     BitsAndBytesConfig,
 )
 import torch
-import gcc
+import gc
 import os
 import logging
 import random
@@ -113,6 +113,6 @@ if __name__=='__main__':
             show_plot=args.show_plot,
             device=args.device
         )
-        gcc.collect()
         torch.cuda.empty_cache()
+        gc.collect()
         result.append(exported_data)
