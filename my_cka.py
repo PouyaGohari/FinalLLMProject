@@ -80,7 +80,6 @@ class CustomCKA(CKA):
         for x1, x2 in tqdm(zip(dataloader1, dataloader2), desc="| Comparing features |", total=num_batches):
             self.model1_features = {}
             self.model2_features = {}
-            print(x1.shape)
             _ = self.model1(x1.squeeze(1).to(self.device))
             _ = self.model2(x2.squeeze(1).to(self.device))
 
