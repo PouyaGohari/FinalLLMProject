@@ -1,3 +1,5 @@
+from turtledemo.forest import start
+
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
@@ -100,11 +102,11 @@ if __name__=='__main__':
         second_model_name = "Arrow"
     layers_of_interest = [f"model.layers.{i}.self_attn.o_proj" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj" for i in range(31)]
     result = []
-    for layer in layers_of_interest:
+    for index in range(0, len(layers_of_interest), 5):
         exported_data = apply_cka(
             first_loader=my_dataloader,
             base_model=general_model,
-            base_model_layers=[layer],
+            base_model_layers=[layers_of_interest[index + i]  for i in range(5)],
             enhanced_model_layers=layers_of_interest,
             enhanced_model=enhanced_model,
             first_model_name="Baseline",
