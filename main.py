@@ -99,7 +99,7 @@ if __name__=='__main__':
         second_model_name = "GenKowlSub"
     else:
         second_model_name = "Arrow"
-    layers_of_interest = [f"model.layers.{i}.self_attn.o_proj" for i in range(31)] + [f"model.layers.{i}.self_attn.qkv_proj" for i in range(31)]
+    layers_of_interest = [f"model.layers.{i}" for i in range(32)]
     result = []
     for index in range(0, len(layers_of_interest), 5):
         exported_data = apply_cka(
