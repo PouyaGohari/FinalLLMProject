@@ -45,11 +45,19 @@ class CustomCKA(CKA):
 
         Reference: https://arxiv.org/pdf/2010.15327.pdf Eq (3)
         """
+        print("Printing k,l: which must be same.")
+        print(K)
+        print(L)
+        print(f"THe shapes are: {K.shape}, {L.shape}")
         N = K.shape[0]
         ones = torch.ones(N, 1, dtype=K.dtype, device=self.device)
+        print(ones)
         result = torch.trace(K @ L)
+        print(result)
         result += ((ones.t() @ K @ ones @ ones.t() @ L @ ones) / ((N - 1) * (N - 2))).item()
+        print(result)
         result -= ((ones.t() @ K @ L @ ones) * 2 / (N - 2)).item()
+        print(result)
         return (1 / (N * (N - 3)) * result).item()
 
     def compare(self,
@@ -85,13 +93,9 @@ class CustomCKA(CKA):
 
             for i, (name1, feat1) in enumerate(self.model1_features.items()):
                 X = feat1.flatten(1)
-                print(X)
                 K = X @ X.t()
-                print(K)
                 K.fill_diagonal_(0.0)
-                print(K)
                 self.hsic_matrix[i, :, 0] += self._HSIC(K, K) / num_batches
-                print(self.hsic_matrix)
 
                 for j, (name2, feat2) in enumerate(self.model2_features.items()):
                     Y = feat2.flatten(1)
