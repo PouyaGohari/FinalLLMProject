@@ -129,7 +129,7 @@ def apply_arrow_or_gks(
         bnb_4bit_compute_dtype=torch.float16,
         bnb_4bit_use_double_quant=False
     )
-    base_model = AutoModelForCausalLM.from_pretrained(base_model_name, torch_dtype=torch.float16, quantization_config=bnb_config)
+    base_model = AutoModelForCausalLM.from_pretrained(base_model_name, torch_dtype=torch.float16, quantization_config=bnb_config , cache_dir="/content/models/")
     arrow_config = ArrowConfig(
         arrow_top_k = arrow_top_k,
         arrow_router_temperature = arrow_router_temperature,
