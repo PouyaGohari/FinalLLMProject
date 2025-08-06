@@ -76,8 +76,6 @@ if __name__=='__main__':
         gks=args.gks,
         language_experts=list(LANGUAGE_EXPERTS.values()),
     )
-    for name, module in general_model.named_modules():
-        print(name, ":", type(module))
 
     my_generator = torch.Generator()
     my_generator.manual_seed(args.seed)
