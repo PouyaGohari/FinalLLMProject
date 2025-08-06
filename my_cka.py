@@ -98,6 +98,12 @@ class CustomCKA(CKA):
 
                     self.hsic_matrix[i, j, 1] += self._HSIC(K, L) / num_batches
                     self.hsic_matrix[i, j, 2] += self._HSIC(L, L) / num_batches
+            for k, feat in self.model1_features.items():
+                print(
+                    f"Layer: {k}, Shape: {feat.shape}, Any NaN: {torch.isnan(feat).any().item()}, All zero: {torch.all(feat == 0).item()}")
+            for k, feat in self.model2_features.items():
+                print(
+                    f"Layer: {k}, Shape: {feat.shape}, Any NaN: {torch.isnan(feat).any().item()}, All zero: {torch.all(feat == 0).item()}")
             del x1, x2, _, self.model1_features, self.model2_features
 
         self.hsic_matrix = self.hsic_matrix[:, :, 1] / (self.hsic_matrix[:, :, 0].sqrt() *
