@@ -45,17 +45,13 @@ class CustomCKA(CKA):
 
         Reference: https://arxiv.org/pdf/2010.15327.pdf Eq (3)
         """
-        print("Printing k,l: which must be same.")
-        print(K)
-        print(L)
-        print(f"THe shapes are: {K.shape}, {L.shape}")
+        K = K.to(torch.float32)
+        L = L.to(torch.float32)
+
         N = K.shape[0]
         ones = torch.ones(N, 1, dtype=K.dtype, device=self.device)
-        print(ones)
         result = torch.trace(K @ L)
-        print(result)
         result += ((ones.t() @ K @ ones @ ones.t() @ L @ ones) / ((N - 1) * (N - 2))).item()
-        print(result)
         result -= ((ones.t() @ K @ L @ ones) * 2 / (N - 2)).item()
         print(result)
         return (1 / (N * (N - 3)) * result).item()
