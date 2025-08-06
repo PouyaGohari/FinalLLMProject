@@ -76,6 +76,7 @@ class CustomCKA(CKA):
 
         N = len(self.model1_layers) if self.model1_layers is not None else len(list(self.model1.modules()))
         M = len(self.model2_layers) if self.model2_layers is not None else len(list(self.model2.modules()))
+        print(f'N = {N}, M = {M}')
 
         self.hsic_matrix = torch.zeros(N, M, 3)
 
@@ -95,13 +96,14 @@ class CustomCKA(CKA):
 
                 for j, (name2, feat2) in enumerate(self.model2_features.items()):
                     Y = feat2.flatten(1)
+                    print(Y)
                     L = Y @ Y.t()
                     L.fill_diagonal_(0)
                     assert K.shape == L.shape, f"Feature shape mismatch! {K.shape}, {L.shape}"
 
                     self.hsic_matrix[i, j, 1] += self._HSIC(K, L) / num_batches
                     self.hsic_matrix[i, j, 2] += self._HSIC(L, L) / num_batches
-                    print(self.hsic_matrix)
+                print(self.hsic_matrix)
             del x1, x2, _, self.model1_features, self.model2_features
         print(self.hsic_matrix)
         self.hsic_matrix = self.hsic_matrix[:, :, 1] / (self.hsic_matrix[:, :, 0].sqrt() *
