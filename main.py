@@ -101,11 +101,11 @@ if __name__=='__main__':
         second_model_name = "Arrow"
     layers_of_interest = [f"model.layers.{i}" for i in range(32)]
     result = []
-    for index in range(0, len(layers_of_interest), 5):
+    for layer in layers_of_interest:
         exported_data = apply_cka(
             first_loader=my_dataloader,
             base_model=general_model,
-            base_model_layers=[layers_of_interest[index + i]  for i in range(5)],
+            base_model_layers=[layer],
             enhanced_model_layers=layers_of_interest,
             enhanced_model=enhanced_model,
             first_model_name="Baseline",
