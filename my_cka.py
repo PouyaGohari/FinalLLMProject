@@ -85,9 +85,13 @@ class CustomCKA(CKA):
 
             for i, (name1, feat1) in enumerate(self.model1_features.items()):
                 X = feat1.flatten(1)
+                print(X)
                 K = X @ X.t()
+                print(K)
                 K.fill_diagonal_(0.0)
+                print(K)
                 self.hsic_matrix[i, :, 0] += self._HSIC(K, K) / num_batches
+                print(self.hsic_matrix)
 
                 for j, (name2, feat2) in enumerate(self.model2_features.items()):
                     Y = feat2.flatten(1)
