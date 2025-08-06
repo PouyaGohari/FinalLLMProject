@@ -84,7 +84,6 @@ class CustomCKA(CKA):
             _ = self.model2(x2.squeeze(1).to(self.device))
 
             for i, (name1, feat1) in enumerate(self.model1_features.items()):
-                print(name1, feat1)
                 X = feat1.flatten(1)
                 K = X @ X.t()
                 K.fill_diagonal_(0.0)
