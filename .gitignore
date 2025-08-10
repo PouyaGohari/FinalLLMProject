@@ -3,3 +3,6 @@ __pycache__/
 logs/*
 models/.locks
 models/models--microsoft--Phi-3-mini-4k-instruct
+centered-kernel-alignment/
+results/
+*.csv
