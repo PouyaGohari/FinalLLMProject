@@ -18,4 +18,5 @@ def arg_parser():
     parser.add_argument("--export_data", action="store_true")
     parser.add_argument("--show_plot", action="store_true")
     parser.add_argument("--device", default='cuda', type=str)
+    parser.add_argument("--save_path", type=str)
     return parser.parse_args()
