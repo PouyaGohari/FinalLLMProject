@@ -3,7 +3,7 @@ import torch
 
 from torch.utils.data import DataLoader
 import datasets
-from custom_dataset import CustomDataset
+from custom_dataset import CustomDatasetCKA
 from tqdm import tqdm
 from warnings import warn
 
@@ -163,20 +163,20 @@ def get_samples(your_dataset:datasets, n_samples:int, seed:int=42) -> datasets:
     """
     return your_dataset.shuffle(seed).select(range(n_samples))
 
-def create_torch_dataset(dataset:datasets, tokenizer:AutoTokenizer.from_pretrained) -> CustomDataset:
+def create_torch_dataset(dataset:datasets, tokenizer:AutoTokenizer.from_pretrained) -> CustomDatasetCKA:
     """
     This function will create custom dataset compatible with torch dataset.
     :param dataset: The text dataset(it must be for testing purpose.)
     :param tokenizer: The tokenizer to tokenize each input text.
     :return:
-    CustomDataset.
+    CustomDatasetCKA.
     """
-    return CustomDataset(
+    return CustomDatasetCKA(
         text_dataset=dataset,
         tokenizer=tokenizer
     )
 
-def dataloader(compatible_dataset:CustomDataset, generator:torch.Generator, batch:int=8, shuffle:bool=True) -> DataLoader:
+def dataloader(compatible_dataset:CustomDatasetCKA, generator:torch.Generator, batch:int=8, shuffle:bool=True) -> DataLoader:
     """
     This function will create a data loader.
     :param compatible_dataset: A custom dataset instantiated form class above.
