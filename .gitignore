@@ -7,3 +7,4 @@ centered-kernel-alignment/
 results/
 *.csv
 .idea/
+BERT-similarity/
