@@ -3,7 +3,7 @@ from transformers import AutoTokenizer
 import datasets
 from MyConfig import *
 
-class CustomDataset(Dataset):
+class CustomDatasetCKA(Dataset):
     def __init__(self, text_dataset:datasets, tokenizer:AutoTokenizer.from_pretrained):
         super().__init__()
         self.tokenizer = tokenizer
