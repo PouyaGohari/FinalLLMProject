@@ -9,6 +9,7 @@ import os
 import logging
 import random
 import numpy as np
+import pandas as pd
 
 from typing import (
     Tuple
@@ -83,6 +84,7 @@ if __name__=='__main__':
 
     compatible_dataset = create_torch_dataset(sub_dataset, tokenizer)
     print(compatible_dataset[0])
+    print(compatible_dataset[0]['input_ids'].shape)
 
     my_dataloader = dataloader(
         compatible_dataset=compatible_dataset,
@@ -97,21 +99,25 @@ if __name__=='__main__':
         second_model_name = "GenKowlSub"
     else:
         second_model_name = "Arrow"
-    layers_of_interest = [f"model.layers.{i}" for i in range(32)]
+    layers_of_interest_first_model = [f"model.layers.{i}" for i in range(32)]
+    layers_of_interest_peft = [f"base_model.model.model.layers.{i}" for i in range(32)]
+
     result = []
-    for layer in layers_of_interest:
+    for layer in layers_of_interest_first_model:
         exported_data = apply_cka(
             first_loader=my_dataloader,
             base_model=general_model,
             base_model_layers=[layer],
-            enhanced_model_layers=layers_of_interest,
+            enhanced_model_layers=layers_of_interest_peft,
             enhanced_model=enhanced_model,
             first_model_name="Baseline",
             second_model_name=second_model_name,
             export_data=args.export_data,
             show_plot=args.show_plot,
-            device=args.device
+            device=args.device,
         )
         torch.cuda.empty_cache()
         gc.collect()
-        result.append(exported_data)
+        result.append({f'layer:{layer}': exported_data.detach().cpu()})
+    df = pd.DataFrame(result)
+    df.to_csv(args.save_path, index=False)
