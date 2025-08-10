@@ -1,5 +1,6 @@
-transformers
-bitsandbytes
-datasets
 hf-xet
 torch_cka
+transformers
+datasets
+torch
+bitsandbytes
